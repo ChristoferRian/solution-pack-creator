@@ -1,0 +1,24 @@
+# venv skill — dibangun ulang oleh scripts/bootstrap.py
+.venv/
+venv/
+
+# build artifact export_bundle.py
+dist/
+
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# editor
+.vscode/
+.idea/
+
+# scratch output
+*.tmp.docx
+~$*.docx

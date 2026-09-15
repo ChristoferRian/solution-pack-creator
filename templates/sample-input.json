@@ -1,0 +1,51 @@
+{
+  "meta": {
+    "title": "PENGADAAN KENDARAAN DARAT KHUSUS COUNTER SURVEILLANCE MOBILE PUSDATIN T.A 2027",
+    "document_code": "SPD-PUSDATIN-CSM-NETWORK-2027",
+    "project_code": "PRJ-PUSDATIN-CSM-NETWORK-2027",
+    "reference_lead_code": "TBD",
+    "lead_name": "",
+    "customer_name": "Kementerian Pertahanan Republik Indonesia",
+    "end_user": "Pusdatin Kemhan",
+    "year_semester_delivery": "TBD",
+    "version": "V1.0 (initial draft)",
+    "document_owner": "PreSales / PGO",
+    "document_status": "Draft for S03 Review",
+    "branding_rule": ""
+  },
+  "background": {
+    "customer_background": "Pusat Data dan Informasi Kementerian Pertahanan (Pusdatin Kemhan) memiliki peran penting dalam mendukung layanan data, aplikasi, infrastruktur teknologi informasi, konektivitas, dan pengamanan sistem informasi di lingkungan Kementerian Pertahanan. Berdasarkan hasil audiensi kebutuhan Tahun Anggaran 2027, Counter Surveillance Mobile (CSM) menjadi salah satu prioritas untuk mendukung kegiatan counter-surveillance dan sterilisasi pimpinan.",
+    "problem_statement": [
+      "Kegiatan pengamanan pimpinan dan area strategis menghadapi ancaman yang berasal dari perangkat penyadapan RF, perangkat elektronik tersembunyi, kamera tersembunyi, rogue atau fake Wi-Fi, perangkat seluler yang tidak diotorisasi, serta aktivitas drone di sekitar area pengamanan.",
+      "Peralatan yang tersedia masih perlu diperkuat dengan kemampuan modern, mobile, terintegrasi, dan dapat dioperasikan secara cepat untuk mendukung deteksi, identifikasi, sterilisasi, pencatatan kejadian, dan respons lapangan."
+    ],
+    "objectives": [
+      "Menyediakan platform Counter Surveillance Mobile untuk kegiatan sterilisasi pimpinan, ruang, kendaraan, dan area strategis.",
+      "Menyediakan IMSI Radar dan Jammer WB (Whitelist/Blacklist) untuk mendeteksi presence perangkat seluler dan menerapkan kebijakan akses komunikasi secara selektif.",
+      "Menyediakan Drone Detection Radar berbasis RF dan perangkat mitigasi Counter-UAS untuk deteksi dini serta penanganan drone tidak berizin.",
+      "Meningkatkan kemampuan penyisiran terhadap perangkat sadap aktif maupun pasif, kamera tersembunyi, sinyal RF, jaringan Wi-Fi, dan perangkat elektronik tersembunyi.",
+      "Menyediakan monitoring, alert, logging, reporting, dan pengolahan data untuk mendukung keputusan operasional."
+    ]
+  },
+  "urs": [
+    { "name": "Counter Surveillance Mobile", "description": "Platform bergerak untuk membawa, mengoperasikan, dan mengintegrasikan perangkat counter-surveillance serta perangkat sterilisasi di lokasi kegiatan." },
+    { "name": "IMSI Radar", "description": "Mendeteksi dan menampilkan jumlah atau presence IMSI/perangkat seluler di sekitar area operasi secara real-time." },
+    { "name": "Jammer WB (Whitelist/Blacklist)", "description": "Menerapkan kebijakan komunikasi selektif sehingga perangkat yang diotorisasi dapat dikecualikan, sedangkan perangkat dalam blacklist dapat dibatasi sesuai SOP dan kewenangan." },
+    { "name": "Drone Detection Radar & Counter-UAS", "description": "Mendeteksi aktivitas drone secara omnidirectional, memberikan early warning, dan mendukung mitigasi terhadap drone yang tidak berizin." },
+    { "name": "RF, Wired & Hidden Camera Sterilization", "description": "Mendeteksi perangkat penyadapan RF maupun wired, aktivitas transmisi, kamera tersembunyi, IR, laser, visible beam, serta menyimpan hasil pemeriksaan." },
+    { "name": "Passive Electronic Device Detection", "description": "Mendeteksi perangkat elektronik berbasis semikonduktor dalam kondisi aktif maupun tidak aktif melalui perangkat pasif/NLJD." },
+    { "name": "Wireless & Wi-Fi Identification", "description": "Mengidentifikasi access point, client, parameter jaringan, rogue/fake Wi-Fi, dan aktivitas paket di sekitar area operasi." },
+    { "name": "Operational Monitoring & Reporting", "description": "Menyediakan dashboard, status perangkat, alert, event logging, audit trail, histori campaign, dan laporan operasional." },
+    { "name": "Secure Data Processing", "description": "Menyediakan perangkat pengolah data dan media penyimpanan terenkripsi untuk mendukung pengelolaan hasil operasi." },
+    { "name": "Inter-Building Network", "description": "Menyediakan perangkat aktif jaringan, rack, distribusi daya, dan proteksi kelistrikan; spesifikasi serta volume ditetapkan setelah survei terpisah." }
+  ],
+  "solution": {
+    "name": "Integrated Counter Surveillance Mobile System",
+    "category": "Counter Surveillance, Electronic Security & Counter-UAS",
+    "deployment_context": "Mobile Leadership Sterilization / Strategic Area Protection",
+    "overview": [
+      "Solusi yang diusulkan mengintegrasikan empat lapisan kemampuan. Lapisan pertama adalah IMSI Radar dan Jammer WB (Whitelist/Blacklist) untuk memberikan awareness terhadap presence perangkat seluler serta menerapkan kebijakan komunikasi selektif. Lapisan kedua adalah Drone Detection Radar berbasis RF dan perangkat Counter-UAS untuk deteksi dini, pemantauan 360 derajat, dan mitigasi drone tidak berizin. Lapisan ketiga adalah perangkat sterilisasi yang mencakup deteksi RF dan wired, hidden camera optics, perangkat elektronik pasif, analisis spektrum, direction finding, identifikasi Wi-Fi, serta acoustic countermeasure. Seluruh perangkat utama dioperasikan melalui platform Counter Surveillance Mobile dan didukung pengolahan serta penyimpanan data yang aman.",
+      "Catatan operasional: aktivasi fungsi jamming dan mitigasi Counter-UAS dilaksanakan hanya oleh personel berwenang sesuai SOP, izin penggunaan spektrum, dan ketentuan yang berlaku."
+    ]
+  }
+}
