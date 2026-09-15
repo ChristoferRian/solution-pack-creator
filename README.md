@@ -1,5 +1,8 @@
 # Solution Pack Creator
 
+> Skill ini berfungsi untuk menjadi guideline membuat Solution Pack document dari
+> bab 1–4. Bab 5-nya biarkan user isi sendiri.
+
 Hermes skill untuk generate dokumen **Solution Pack `.docx`** (section 1–4) sesuai
 house-style b2b-id, dikunci ke template Pusdatin CSM v1.3.
 
