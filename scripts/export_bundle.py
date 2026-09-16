@@ -60,12 +60,16 @@ def main():
     print(f'SHA256 : {digest}')
     print(f'Built  : {datetime.now(timezone.utc).isoformat(timespec="seconds")}')
     print()
-    print('Install on another Hermes agent:')
-    print(f'  1. copy {out.name} to the target machine')
-    print(f'  2. unzip -o {out.name} -d "$HERMES_HOME/skills/productivity/"')
-    print(f'  3. python3 "$HERMES_HOME/skills/productivity/{name}/scripts/bootstrap.py"')
-    print(f'  4. python3 "$HERMES_HOME/skills/productivity/{name}/scripts/qc.py" \\')
-    print(f'         "$HERMES_HOME/skills/productivity/{name}/templates/sample-output.docx"')
+    print('Install on another machine (harness apa pun, butuh Python 3.9+):')
+    print(f'  1. copy {out.name} ke mesin target')
+    print(f'  2. unzip -o {out.name} -d <folder-tujuan>')
+    print(f'  3. python3 <folder-tujuan>/{name}/scripts/bootstrap.py')
+    print(f'  4. python3 <folder-tujuan>/{name}/scripts/qc.py \\')
+    print(f'         "<folder-tujuan>/{name}/templates/sample-output.docx"')
+    print()
+    print('Khusus Hermes (skill dir = $HERMES_HOME/skills/productivity/):')
+    print(f'  unzip -o {out.name} -d "$HERMES_HOME/skills/productivity/"')
+    print(f'  python3 "$HERMES_HOME/skills/productivity/{name}/scripts/bootstrap.py"')
     return 0
 
 

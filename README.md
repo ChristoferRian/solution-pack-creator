@@ -10,7 +10,12 @@ house-style b2b-id, dikunci ke **house style v1.1** (style set diambil dari doku
 - **Section yang dibuat:** 1. Document Control, 2. Project Background,
   3. User Requirement Summary, 4. Proposed Solution
 - **Bukan scope skill ini:** spec table (section 5), Timeline & Approval (section 6) — manual
-- **Status:** v1.1.0 — house style v1.1, tested & QC-passed (QC struktur + 9 negative input test)
+- **Status:** v1.1.1 — house style v1.1, tested & QC-passed (QC struktur + 9 negative input test)
+
+Skill ini **harness-agnostic**: cuma butuh Python 3.9+ dan `python-docx`, dan tidak ada
+absolute path yang di-hardcode (semua script me-resolve path relatif ke folder skill).
+Command di seluruh dokumen memakai placeholder `<skill_dir>` = folder tempat `SKILL.md`
+berada. Bagian yang Hermes-specific (`INSTALL.md`, `references/publish.md`) ditandai jelas.
 
 Skill ini men-standardisasi **struktur, layout, dan styling**, bukan menulis konten
 otomatis. Isi konten (customer, URS, solution name, dst) tetap disusun dari

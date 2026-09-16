@@ -1,7 +1,7 @@
 ---
 name: solution-pack-creator
 description: "Generate dokumen Solution Pack .docx section 1-4 sesuai house-style b2b-id."
-version: 1.1.0
+version: 1.1.1
 author: Chris, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -18,13 +18,14 @@ Background, User Requirement Summary, Proposed Solution) dengan styling persis h
 perusahaan Chris. Timeline & Approval Section tidak dibuat skill ini (manual oleh Chris).
 
 Isi konten (customer, URS, solution name, dsb.) tetap disusun agent dari MoM/requirement
-di vault Obsidian atau input user — skill ini men-standardisasi **struktur, layout, dan
-styling**, bukan menulis konten otomatis.
+atau input user — skill ini men-standardisasi **struktur, layout, dan styling**, bukan
+menulis konten otomatis.
 
-Status: **v1.1.0 — house style v1.1** (style set diambil dari `Solution Pack Pussiberad 2027
+Status: **v1.1.1 — house style v1.1** (style set diambil dari `Solution Pack Pussiberad 2027
 V1.1.docx`). QC + verifikasi struktur lolos; sample output: `templates/sample-output.docx`.
 
-## File pendukung (dipakai installer URL — jangan hapus referensinya)
+## File pendukung (sebut eksplisit di sini supaya ikut ter-install di harness yang hanya
+menarik file yang direferensikan)
 - `references/style-spec.md` — spec house style v1.1 (acuan styling section 1-4).
 - `references/style-spec-v0-pusdatin-legacy.md` — arsip spec lama (Pusdatin CSM v1.3); masih
   acuan layout Spec Table section 5 & Approval Table section 6 (manual oleh Chris).
@@ -41,14 +42,20 @@ V1.1.docx`). QC + verifikasi struktur lolos; sample output: `templates/sample-ou
 - Jangan untuk: dokumen selain Solution Pack, atau bagian Timeline & Approval / spec table.
 
 ## Prerequisites
-- venv skill: `<skill_dir>/.venv` (python-docx). Kalau belum ada:
-  `uv venv <skill_dir>/.venv && uv pip install --python <skill_dir>/.venv/bin/python python-docx`
+- **`<skill_dir>` = folder tempat `SKILL.md` ini berada** (hasil clone/unzip/install). Semua
+  perintah di bawah relatif ke folder itu — skill ini tidak menyimpan absolute path.
+- venv skill: `<skill_dir>/.venv` (python-docx). Cara termudah:
+  `python3 <skill_dir>/scripts/bootstrap.py` (otomatis pakai `uv` kalau tersedia, fallback ke
+  `python -m venv` + pip). Manual: `uv venv <skill_dir>/.venv && uv pip install --python
+  <skill_dir>/.venv/bin/python python-docx`
 - Template house style: `templates/house-style-template.docx` (**wajib ada**). Generator
   menolak jalan kalau file ini hilang. Cara regenerasi template dari file acuan: buka docx
   acuan, ambil `sectPr`, ganti isi `word/document.xml` jadi `<w:body>{sectPr}</w:body>`,
   pertahankan part lain apa adanya (styles/numbering/theme).
 - Style acuan: `references/style-spec.md`.
-- Konten: MoM/requirement PDF dari vault Obsidian (`/vaults/obsidian/<Vault>/RO/`) + input user.
+- Konten: dokumen MoM/requirement (PDF) + input user. Di setup Hermes Chris, sumbernya ada
+  di vault Obsidian (`<vault>/<project>/RO/`); di harness atau mesin lain, pakai file yang
+  diberikan user. Path vault itu contoh konteks, bukan syarat.
 
 ## How to Run
 1. Kumpulkan konten → susun JSON sesuai `references/input-schema.md`.
@@ -60,11 +67,22 @@ V1.1.docx`). QC + verifikasi struktur lolos; sample output: `templates/sample-ou
 
 ## Quick Reference
 ```
-S=/opt/data/skills/productivity/solution-pack-creator
-$S/.venv/bin/python $S/scripts/generate.py input.json output.docx
-$S/.venv/bin/python $S/scripts/qc.py output.docx
-$S/.venv/bin/python $S/scripts/_verify_dev.py output.docx
+# <skill_dir> = folder tempat SKILL.md ini berada
+cd "<skill_dir>"
+python3 scripts/bootstrap.py                          # sekali saja: bikin .venv + python-docx
+.venv/bin/python scripts/generate.py input.json out.docx
+.venv/bin/python scripts/qc.py out.docx
+.venv/bin/python scripts/_verify_dev.py out.docx
 ```
+Di Windows interpreter-nya `.venv\Scripts\python.exe`.
+
+## Kompatibilitas harness
+Skill ini harness-agnostic — cuma butuh **Python 3.9+** dan **python-docx**
+(lihat `requirements.txt`). Semua `scripts/*.py` me-resolve path relatif ke folder skill
+(`Path(__file__)`), jadi tidak ada absolute path di kode. Cara pakai di harness selain Hermes
+(mis. commandcode, Claude Code, Codex): copy/clone folder skill → `python3 scripts/bootstrap.py`
+→ jalankan script seperti di Quick Reference. Yang Hermes-specific hanya `INSTALL.md` dan
+`references/publish.md` (cara install ke Hermes); sisanya berlaku umum.
 
 ## Style House v1.1 (ringkas — detail di `references/style-spec.md`)
 - Judul dokumen → style `Title`; section 1–4 → `Heading 1`; sub-section → `Heading 2`.
@@ -115,6 +133,9 @@ $S/.venv/bin/python $S/scripts/_verify_dev.py output.docx
   ditambahkan ke output. Layout-nya (bila perlu diedit manual) ada di
   `references/style-spec-v0-pusdatin-legacy.md`.
 - URS fleksibel jumlahnya (bukan wajib 10) — keputusan user.
+- **Jangan menaruh absolute path** (`/opt/data/...`, `/Users/...`, `/vaults/...`) di SKILL.md,
+  `references/`, atau `scripts/`. Pakai `<skill_dir>` atau path relatif supaya skill tetap
+  jalan di harness lain (commandcode, Claude Code, Codex, dll).
 
 ## Verification
 - `scripts/qc.py output.docx` → "QC PASS" (0 issue).

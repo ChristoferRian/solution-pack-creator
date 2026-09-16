@@ -1,4 +1,8 @@
-# Export & Install — Solution Pack Creator
+# Export & Install — Solution Pack Creator (khusus Hermes)
+
+> **File ini Hermes-specific.** Untuk harness lain (commandcode, Claude Code, Codex, dll.),
+> cukup copy/clone folder skill lalu `python3 <skill_dir>/scripts/bootstrap.py` — lihat
+> `INSTALL.md` bagian "Cara umum". Tidak ada path yang di-hardcode di script.
 
 Dua jalur distribusi. Jalur A offline (bundle zip), jalur B online (install dari
 URL raw GitHub).
@@ -18,7 +22,7 @@ sisi target), `dist/`, `__pycache__`, `.git`.
 Di mesin target:
 
 ```
-unzip -o solution-pack-creator-1.0.0.zip -d "$HERMES_HOME/skills/productivity/"
+unzip -o solution-pack-creator-<versi>.zip -d "$HERMES_HOME/skills/productivity/"
 python3 "$HERMES_HOME/skills/productivity/solution-pack-creator/scripts/bootstrap.py"
 python3 "$HERMES_HOME/skills/productivity/solution-pack-creator/scripts/qc.py" \
         "$HERMES_HOME/skills/productivity/solution-pack-creator/templates/sample-output.docx"
