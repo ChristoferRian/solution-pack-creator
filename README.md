@@ -4,12 +4,13 @@
 > bab 1–4. Bab 5-nya biarkan user isi sendiri.
 
 Hermes skill untuk generate dokumen **Solution Pack `.docx`** (section 1–4) sesuai
-house-style b2b-id, dikunci ke template Pusdatin CSM v1.3.
+house-style b2b-id, dikunci ke **house style v1.1** (style set diambil dari dokumen
+`Solution Pack Pussiberad 2027 V1.1.docx`).
 
 - **Section yang dibuat:** 1. Document Control, 2. Project Background,
   3. User Requirement Summary, 4. Proposed Solution
-- **Bukan scope skill ini:** Timeline & Approval Section, spec table (dikerjakan manual)
-- **Status:** v1.0.0 — locked, tested & QC-passed (31 struktur cek + 9 negative input test)
+- **Bukan scope skill ini:** spec table (section 5), Timeline & Approval (section 6) — manual
+- **Status:** v1.1.0 — house style v1.1, tested & QC-passed (QC struktur + 9 negative input test)
 
 Skill ini men-standardisasi **struktur, layout, dan styling**, bukan menulis konten
 otomatis. Isi konten (customer, URS, solution name, dst) tetap disusun dari
@@ -65,15 +66,17 @@ Contoh output: [`templates/sample-output.docx`](templates/sample-output.docx).
 |---|---|
 | `SKILL.md` | Definisi skill, procedure, pitfalls, verification |
 | `INSTALL.md` | Instalasi ringkas untuk manusia |
-| `references/style-spec.md` | Spec styling (Pusdatin CSM v1.3) |
+| `references/style-spec.md` | Spec house style v1.1 (acuan styling section 1–4) |
+| `references/style-spec-v0-pusdatin-legacy.md` | Arsip spec lama (Pusdatin CSM v1.3); acuan layout Spec Table & Approval |
 | `references/input-schema.md` | Skema input JSON |
 | `references/qc-checklist.md` | Checklist QC output |
 | `references/publish.md` | Cara export & install ke Hermes lain |
-| `scripts/generate.py` | Generator `.docx` section 1–4 |
-| `scripts/qc.py` | QC struktur output |
+| `scripts/generate.py` | Generator `.docx` section 1–4 (berbasis template house style) |
+| `scripts/qc.py` | QC struktur + style output |
 | `scripts/bootstrap.py` | Bikin/repair venv + install dependency |
 | `scripts/export_bundle.py` | Packaging zip untuk dipindah |
 | `scripts/_verify_dev.py`, `scripts/_negtest_dev.py` | Test dev (opsional) |
+| `templates/house-style-template.docx` | Template house style (styles/numbering/theme) — **wajib ada** untuk generate |
 | `templates/` | Sample input & output |
 
 ## Requirements

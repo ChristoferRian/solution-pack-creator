@@ -49,6 +49,9 @@ TBD diperbolehkan sebagai nilai string "TBD".
 6. Semua field di atas wajib. Nilai kosong string diperbolehkan (mis. lead_name, branding_rule), "TBD" diperbolehkan.
 7. Konten bebas — agent menyusun dari MoM vault / input user. Generator hanya memvalidasi struktur, bukan kualitas konten.
 8. **Jangan letakkan spec table / timeline / approval di JSON ini** — out of scope v1.
+9. **meta.title dipakai untuk document properties saja** (title file), TIDAK tampil di body.
+   Dokumen hanya punya satu baris judul: "SOLUTION PACK DOCUMENT" (style `Title`).
+   Jangan menambahkan baris judul pengadaan — keputusan Chris untuk house style v1.1.
 
 ## Defaults
 

@@ -1,7 +1,7 @@
 ---
 name: solution-pack-creator
-description: "Generate dokumen Solution Pack .docx section 1-4 sesuai template house-style b2b-id."
-version: 1.0.0
+description: "Generate dokumen Solution Pack .docx section 1-4 sesuai house-style b2b-id."
+version: 1.1.0
 author: Chris, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -14,108 +14,105 @@ metadata:
 # Solution Pack Creator
 
 Menghasilkan dokumen **Solution Pack .docx** (section 1–4: Document Control, Project
-Background, User Requirement Summary, Proposed Solution) dengan styling persis
-house-style perusahaan Chris — styling dikunci ke template Pusdatin CSM v1.3
-(lihat `references/style-spec.md`). Timeline & Approval Section tidak dibuat skill
-ini (dikerjakan manual oleh Chris).
+Background, User Requirement Summary, Proposed Solution) dengan styling persis house-style
+perusahaan Chris. Timeline & Approval Section tidak dibuat skill ini (manual oleh Chris).
 
-Isi konten (customer, URS, solution name, dan seterusnya) tetap disusun oleh agent
-dari MoM/requirement di vault Obsidian atau input user — skill ini men-standardisasi
-**struktur, layout, dan styling**, bukan menulis konten secara otomatis.
+Isi konten (customer, URS, solution name, dsb.) tetap disusun agent dari MoM/requirement
+di vault Obsidian atau input user — skill ini men-standardisasi **struktur, layout, dan
+styling**, bukan menulis konten otomatis.
 
-Status: **v1.0.0 — locked, tested & QC-passed** (31 struktur cek + 9 negative input
-tests all pass) dan portable (bisa di-export + di-install ke Hermes lain, lihat
-`references/publish.md`). Sample output verifiable: `templates/sample-output.docx`.
+Status: **v1.1.0 — house style v1.1** (style set diambil dari `Solution Pack Pussiberad 2027
+V1.1.docx`). QC + verifikasi struktur lolos; sample output: `templates/sample-output.docx`.
+
+## File pendukung (dipakai installer URL — jangan hapus referensinya)
+- `references/style-spec.md` — spec house style v1.1 (acuan styling section 1-4).
+- `references/style-spec-v0-pusdatin-legacy.md` — arsip spec lama (Pusdatin CSM v1.3); masih
+  acuan layout Spec Table section 5 & Approval Table section 6 (manual oleh Chris).
+- `references/input-schema.md` — skema JSON input. `references/qc-checklist.md` — checklist QC.
+- `references/publish.md` + `INSTALL.md` + `requirements.txt` — distribusi & dependency.
+- `scripts/bootstrap.py` — bikin `.venv` + install requirement; `scripts/export_bundle.py` —
+  bikin bundle zip di `dist/`; `scripts/_negtest_dev.py` — test input invalid.
+- `templates/house-style-template.docx`, `templates/sample-input.json`,
+  `templates/sample-output.docx`, `scripts/generate.py`, `scripts/qc.py`,
+  `scripts/_verify_dev.py`.
 
 ## When to Use
-- User minta bikin / draft / revisi dokumen Solution Pack untuk leads b2b-id
-- Jangan untuk: dokumen selain Solution Pack, atau bagian Timeline & Approval
+- User minta bikin / draft / revisi dokumen Solution Pack untuk leads b2b-id.
+- Jangan untuk: dokumen selain Solution Pack, atau bagian Timeline & Approval / spec table.
 
 ## Prerequisites
-- venv skill: `<skill_dir>/.venv` (python-docx). Bikin/verifikasi dengan
-  `scripts/bootstrap.py` — ia prefer `uv`, fallback `python -m venv` + `pip`, dan
-  install dari `requirements.txt`.
-- Spec styling ada di dalam skill: `references/style-spec.md`
-- Skema input: `references/input-schema.md`
-- Untuk konten: MoM/requirement PDF dari vault Obsidian (path vault spesifik mesin user)
+- venv skill: `<skill_dir>/.venv` (python-docx). Kalau belum ada:
+  `uv venv <skill_dir>/.venv && uv pip install --python <skill_dir>/.venv/bin/python python-docx`
+- Template house style: `templates/house-style-template.docx` (**wajib ada**). Generator
+  menolak jalan kalau file ini hilang. Cara regenerasi template dari file acuan: buka docx
+  acuan, ambil `sectPr`, ganti isi `word/document.xml` jadi `<w:body>{sectPr}</w:body>`,
+  pertahankan part lain apa adanya (styles/numbering/theme).
+- Style acuan: `references/style-spec.md`.
+- Konten: MoM/requirement PDF dari vault Obsidian (`/vaults/obsidian/<Vault>/RO/`) + input user.
 
 ## How to Run
-1. Kumpulkan konten (dari vault/user) → susun draft section 1–4 dalam bentuk JSON
-   (skema di `references/input-schema.md`).
-2. Validasi JSON manual (kuncinya ada & wajib semua, lihat skema) sebelum generate.
-3. Generate:
-   `terminal(command="<skill_dir>/.venv/bin/python <skill_dir>/scripts/generate.py <input.json> <output.docx>")`
-4. QC output pakai `references/qc-checklist.md`.
-
-## Files
-Installer URL Hermes hanya mengambil SKILL.md + path yang direferensi eksplisit di
-body (`references/`, `templates/`, `scripts/`). Daftar ini wajib dipertahankan:
-- `scripts/generate.py` — generator .docx (section 1–4)
-- `scripts/qc.py` — QC struktur output
-- `scripts/bootstrap.py` — bikin/repair venv + install dependency
-- `scripts/export_bundle.py` — packaging zip untuk dipindah ke Hermes lain
-- `scripts/_verify_dev.py`, `scripts/_negtest_dev.py` — test dev (opsional)
-- `references/input-schema.md`, `references/qc-checklist.md`, `references/style-spec.md`, `references/publish.md`
-- `templates/sample-input.json`, `templates/sample-output.docx`
-- `[requirements.txt](./requirements.txt)` dan `[INSTALL.md](./INSTALL.md)`
+1. Kumpulkan konten → susun JSON sesuai `references/input-schema.md`.
+2. Generate:
+   `<skill_dir>/.venv/bin/python <skill_dir>/scripts/generate.py <input.json> <output.docx>`
+3. QC wajib sebelum dikirim ke user:
+   `<skill_dir>/.venv/bin/python <skill_dir>/scripts/qc.py <output.docx>`  → harus "QC PASS".
+4. Opsional (verifikasi dalam): `scripts/_verify_dev.py <output.docx>` → "ALL PASS".
 
 ## Quick Reference
 ```
-# setup / repair venv (portable)
-python3 <skill_dir>/scripts/bootstrap.py
-# generate
-<skill_dir>/.venv/bin/python <skill_dir>/scripts/generate.py <input.json> <output.docx>
-# QC struktur (wajib pass sebelum dikirim ke user)
-<skill_dir>/.venv/bin/python <skill_dir>/scripts/qc.py <output.docx>
-# export bundle buat dipindah ke Hermes lain
-python3 <skill_dir>/scripts/export_bundle.py
-# contoh input lengkap lihat templates/sample-input.json
+S=/opt/data/skills/productivity/solution-pack-creator
+$S/.venv/bin/python $S/scripts/generate.py input.json output.docx
+$S/.venv/bin/python $S/scripts/qc.py output.docx
+$S/.venv/bin/python $S/scripts/_verify_dev.py output.docx
 ```
-`<skill_dir>` = folder skill ini di mesin manapun (mis. `~/.hermes/skills/productivity/solution-pack-creator`).
+
+## Style House v1.1 (ringkas — detail di `references/style-spec.md`)
+- Judul dokumen → style `Title`; section 1–4 → `Heading 1`; sub-section → `Heading 2`.
+- Body → `Normal - H2`; bullet → `Bullet List - H2`; sel tabel → `Table - Item` /
+  `Table - Description`. **Jangan** pakai `Normal`, `List Bullet`, atau `Heading 3`.
+- Font dari theme (Calibri heading / Cambria body) — jangan set font/size langsung di body.
+- Tabel: style `Normal Table` + border manual #9FBAD0, fill label #E9ECEF, header #4F81BD,
+  zebra #DBE5F1/#FFFFFF.
+- Kolom **No URS auto-numbering** (numId 7), bukan angka manual.
 
 ## Procedure
-1. **Kumpulkan konten** — MoM dari vault, kebutuhan user. Selesaikan ambiguitas
-   (customer, end user, solusi, URS) sebelum lanjut; jangan mengarang konten.
-   Selesai: semua field wajib skema terisi atau di-mark TBD.
-2. **Susun input JSON** sesuai `references/input-schema.md`. Field konten bebas
-   diisi agent, field struktur (12 label Document Control, urutan section, 4 baris
-   tabel 4.1) dipaksa oleh generator. Selesai: JSON parse & wajib semua terisi.
-3. **Generate .docx** dengan perintah di Quick Reference. Selesai: file output
-   ada dan dibuka tanpa error (verifikasi dengan open ulang pakai python-docx).
-4. **QC** — jalankan `scripts/qc.py` (validasi struktur + typos terlarang) lalu
-   `references/qc-checklist.md` untuk review visual. Selesai: QC pass, laporkan
-   path output ke user.
-5. **Serahkan** — kirim file docx ke user. Chris menambahkan Timeline & Approval
-   secara manual setelahnya.
-
-## Export & Install
-- Bundle zip: `python3 <skill_dir>/scripts/export_bundle.py` → `<skill_dir>/dist/<name>-<version>.zip`
-  (tanpa `.venv`; cetak SHA256). Unzip di target, lalu jalankan `scripts/bootstrap.py`.
-- Dari GitHub: `hermes skills install <raw-url>/SKILL.md --yes` — installer mengambil
-  SKILL.md + file yang direferensi di body (`references/`, `templates/`, `scripts/`).
-  **Jangan hapus referensi file pendukung dari body**; kalau dihapus, file itu tidak
-  ikut ter-install.
-- Jalur lengkap + alternatif yang tidak jalan: `references/publish.md`.
-- Ringkas untuk manusia: `[INSTALL.md](./INSTALL.md)`.
+1. **Kumpulkan konten** — MoM/requirement. Selesaikan ambiguitas (customer, end user,
+   solusi, URS) sebelum lanjut; jangan mengarang konten. Selesai: semua field wajib terisi
+   atau ditandai TBD.
+2. **Susun input JSON** sesuai `references/input-schema.md`. Field struktur (12 label
+   Document Control, urutan section, tabel 4.1 4 baris) dipaksa generator. Selesai: JSON
+   parse & valid (generator exit 2 kalau tidak).
+3. **Generate .docx**. Selesai: file ada, terbuka dengan python-docx, exit 0.
+4. **QC** — `scripts/qc.py` harus "QC PASS: no issues", lalu review visual
+   `references/qc-checklist.md`. Selesai: QC pass, path output dilaporkan ke user.
+5. **Serahkan** — kirim docx ke user; Chris menambahkan spec table + Timeline & Approval.
 
 ## Pitfalls
-- Jangan tulis nomor section otomatis Word (numPr) — house-style pakai numbering
+- **Style salah = tampilan salah.** Body wajib `Normal - H2`; memakai `Normal` masih terlihat
+  mirip tapi kehilangan indent/justify house style. Bullet wajib `Bullet List - H2`.
+- Section pakai `Heading 1` (bukan `Heading 2`), judul dokumen pakai `Title` (bukan `Heading 1`).
+  House style v1.1 tidak memakai `Heading 3` sama sekali.
+- Tabel jangan diberi table style bawaan Word (`Table Grid`) — house style pakai
+  `Normal Table` + border manual 0.5pt #9FBAD0.
+- Kolom No URS pakai numPr (numId 7). Jangan menulis angka literal — kalau nanti URS
+  ditambah/dikurangi, nomor manual bikin dokumen tidak konsisten dan `qc.py` tetap menuntut
+  auto-numbering.
+- Jangan tulis nomor section otomatis Word (numPr) di heading — house-style pakai numbering
   manual diketik ("1. Document Control").
-- Zebra tabel: DBE5F1/FFFFFF harus strict alternation per item row — dokumen
-  sumber punya beberapa row tanpa fill; itu bug template, jangan ditiru.
-- Spec table & Timeline & Approval bukan scope v1 skill ini.
-- Item software di spec table pakai GAMBAR="N/A" — hanya relevan di section 5 (out of scope), dicatat untuk v2 catalog.
+- Zebra tabel: #DBE5F1/#FFFFFF harus strict alternation per baris data, mulai #DBE5F1.
+- **Kalau template/style diganti**, wajib: generate sample dari `templates/sample-input.json`,
+  jalankan `qc.py` + `_verify_dev.py`, dan bandingkan style XML hasil generate dengan file
+  acuan (harus identik untuk style yang sama). Jangan mengubah template tanpa re-verifikasi.
+- Style XML di template ini memakai `styleId` numerik — script yang membaca XML mentah harus
+  memetakan `styleId` → `w:name` (lihat `scripts/_verify_dev.py`), bukan menganggap
+  `styleId == "Heading1"`.
+- Spec table (section 5) & Approval table (section 6) di luar scope generator — jangan
+  ditambahkan ke output. Layout-nya (bila perlu diedit manual) ada di
+  `references/style-spec-v0-pusdatin-legacy.md`.
 - URS fleksibel jumlahnya (bukan wajib 10) — keputusan user.
-- `.venv` sengaja tidak ikut bundle/zip — dibangun ulang oleh `scripts/bootstrap.py`
-  di mesin target. Copy manual tanpa bootstrap → `ModuleNotFoundError: docx`.
-- Skill lokal (source `local`) tidak ikut `hermes skills snapshot export`; pakai
-  `scripts/export_bundle.py` atau install-URL, lihat `references/publish.md`.
 
 ## Verification
-- `scripts/qc.py output.docx` → "QC PASS" + 0 error
-- Buka ulang output dengan python-docx → struktur section 1-4 lengkap & urut
-- Struktural (dev, opsional): `scripts/_verify_dev.py <output.docx>` (set `SP_REF_DOCX`
-  untuk membandingkan dengan dokumen referensi Pusdatin CSM v1.3 bila tersedia)
-- Negative test (dev): `scripts/_negtest_dev.py` → 9 kasus input invalid ditolak
-- Pasca-install di mesin baru: `scripts/bootstrap.py` → `venv OK`, lalu `scripts/qc.py`
-  pada `templates/sample-output.docx` → `QC PASS`
+- `scripts/qc.py output.docx` → "QC PASS" (0 issue).
+- `scripts/_verify_dev.py output.docx` → "ALL PASS" (struktur XML, style, lebar kolom,
+  border, margin, auto-numbering URS).
+- `templates/sample-output.docx` = output acuan dari `templates/sample-input.json`.

@@ -1,73 +1,56 @@
-# Solution Pack — Style Spec (Reference: Pusdatin CSM v1.3.docx)
+# House Style — Solution Pack Document (v1.1, Sep 2026)
 
-Locked decision: semua dokumen Solution Pack hasil generate ikut styling dokumen
-"Solution Pack Pusdatin Counter Surveillance Mobile v1.3.docx".
+Acuan resmi: file `Solution Pack Pussiberad 2027 V1.1.docx` (dari Chris).
+Template generator: `templates/house-style-template.docx` — styles.xml, numbering.xml,
+theme1.xml, dan sectPr disalin dari file itu, isinya dikosongkan.
 
-## Page Setup
-- Ukuran: Letter (12240 x 15840 dxa / 8.5" x 11")
-- Margin: top 1300, right 720, bottom 520, left 720 dxa (≈ top 2.29cm, samping 1.27cm, bottom 0.92cm)
-- Header/footer: kosong, no page number
+Kalau ada selisih antara file acuan dan `style-formatting-guidance.md`, **file menang**.
 
-## Teks
-| Elemen | Font | Size (half-pt -> pt) | Warna | Lain |
-|---|---|---|---|---|
-| Heading1 (judul dok) | Arial | 40 -> 20pt | #123555 | Bold, CENTER |
-| Heading2 (section 1-6) | Calibri | 23 -> 11.5pt | #123555 | Bold, numbering manual diketik ("1. Document Control") |
-| Heading3 (2.1 dst) | Calibri | 19 -> 9.5pt | #123555 | Bold, numbering manual |
-| Body/Normal | Calibri | 16 -> 8pt | #222222 | spacing after=60, line=252 auto |
-- Indent legacy H2: left 514 hanging 719; H3: left 635 hanging 419
-- Heading style family table: TableContents / TableHeading (bold, center) / TableParagraph
+## Halaman
+- Letter 8.5 x 11 in; margin 936 dxa (0.65 in) di keempat sisi; header/footer distance 0.
 
-## Warna Palet
-- Navy heading: #123555
-- Body text: #222222
-- Border tabel: single sz=4 (0.5pt) #9FBAD0 — semua tabel
-- Header row tabel: fill #4F81BD, teks bold 7pt (7pt = sz 14)
-- Group Roman (I./II.): fill #1F4E79, gridSpan penuh, bold 7pt
-- Sub-group letter (A./B.): fill #4F81BD, 1 sel full-width, bold 7pt
-- Label col DocControl & 4.1: fill #E9ECEF
-- Zebra data row spec: #DBE5F1 / #FFFFFF bergantian per item
-- Header text URS & Approval: white #FFFFFF bold (spec header di dok sumber tanpa warna eksplisit — standardize ke white)
+## Font & warna
+- Theme: **majorFont = Calibri** (heading), **minorFont = Cambria** (body).
+- Body text #222222. Jangan pernah set font/size langsung di paragraf — ikut style/theme.
 
-## Tabel 1 — Document Control
-- 12 baris x 2 kolom, lebar 3090 / 7278 dxa
-- Label: bold, fill #E9ECEF | Value: regular
-- Field tetap: Document Name, Document Code, Project Code, Reference Lead Code,
-  Lead Name, Customer Name, End User, Year & Semester Delivery, Version,
-  Document Owner (PreSales / PGO), Document Status (Draft for S03 Review), Branding Rule
+## Paragraph style
+| Style | Dipakai untuk | Font | Size | Warna | Indent | Spacing |
+|---|---|---|---|---|---|---|
+| `Title` | baris "SOLUTION PACK DOCUMENT" | Calibri bold | 24 | 17375E | center (left 0.5" warisan Normal) | after 15pt, line 1.0 |
+| `Heading 1` | section 1–4 | Calibri bold | 16 | 123555 | left 0 | after 3pt, line 1.05, outlineLvl 0 |
+| `Heading 2` | sub-section 2.1/2.2/2.3/4.1/4.2 | Calibri bold | 14 | 1F497D | left 400 dxa + leftChars 200 | after 3pt, line 1.05, outlineLvl 1 |
+| `Normal - H2` | paragraf body | Cambria | 11 | inherit (#000) | justify, left 965 dxa (0.67"), first line 274 dxa (0.19") | after 3pt, line 1.05 |
+| `Bullet List - H2` | bullet (2.3 Objective) | Cambria | 11 | inherit | justify, left 4 ch, hanging 1 ch | after 3pt, line 1.05 |
+| `Normal` | base style saja | Cambria | 11 | 222222 | left 720 dxa, first line 91 dxa | after 3pt, line 1.05 |
+| `Table - Item` | sel nama/label tabel (bold) | Cambria bold | 11 | inherit | left 0 | after 3pt |
+| `Table - Description` | sel deskripsi tabel | Cambria | 11 | inherit | justify, ind 0 | after 3pt |
 
-## Tabel 2 — URS
-- 3 kolom: 605 / 2370 / 7393 dxa (No | User Requirement | Deskripsi)
-- Header: #4F81BD + white bold 7pt
-- Data 7.5pt (sz 15): No center, nama UR bold, deskripsi regular
-- Selalu 10 requirement
+`Heading 3` masih ada di template (warisan) tapi **tidak dipakai** — house style hanya
+Title / Heading 1 / Heading 2.
+Dua style terakhir (`Bullet List - H2`, `Table - Description`) tidak ada di file acuan;
+generator membuatnya otomatis (`ensure_house_styles()`) sesuai nilai di tabel ini.
 
-## Tabel 3 — Solution Name (4.1)
-- Target: 4 baris x 2 kolom = header row (Item|Description) + 3 baris:
-  Solution Name / Solution Category / Deployment Context
-- Lebar 3090 / 7278, label fill #E9ECEF bold
-- (Di dok sumber header row kehapus — itu deviation, bukan pola)
+## Tabel
+- Table style: **`Normal Table`** (tanpa style bawaan); border digambar manual:
+  single, sz 4 (0.5 pt), warna **#9FBAD0**, semua sisi termasuk insideH/insideV.
+- `tblLayout=fixed`, `tblCellMar` 70/100/70/100 dxa.
+- Lebar kolom: DocControl & 4.1 = `3090/7278`; URS = `605/2370/7393` dxa.
+- Fill: label **#E9ECEF**, header **#4F81BD** (teks putih bold 10pt, center, vAlign center),
+  zebra data **#DBE5F1/#FFFFFF** (baris data pertama DBE5F1).
+- Teks sel: DocControl 10pt (label bold); header URS 10pt bold putih;
+  isi URS pakai `Table - Item` / `Table - Description` (11pt Cambria); header 4.1 pakai
+  `Table - Item` + warna putih.
+- Header tabel URS: `tblHeader` + `cantSplit` (repeat saat pindah halaman).
+- **Kolom No URS: auto-numbering Word** (`numId 7` → abstractNum decimal `"%1."`),
+  bukan angka manual. Nomor otomatis ikut kalau jumlah URS berubah.
 
-## Tabel 4 — Spec Table (Detailed Technical Specification)
-- 5 kolom: NO 512 | URAIAN BARANG 4957 | VOL 645 | SAT 634 | GAMBAR 3174 (total 9922 dxa, fixed layout)
-- Cell margin: 90 top/bottom, 100 left/right
-- Header row: #4F81BD, bold 7pt, cantSplit + tblHeader (repeat tiap halaman)
-- Struktur baris: Roman group (full-width, #1F4E79) -> Letter sub-group (full-width, #4F81BD) -> item rows
-- Nomor item reset per sub-grup; NO col: center bold 7pt
-- URAIAN cell: baris pertama = nama item BOLD 7pt; spec berikut "Parameter: " bold + "value" regular, 7pt
-- VOL/SAT: center regular 7pt; SAT pakai Unit/Set/Lot/License/Server
-- GAMBAR: gambar produk per item; item software ditulis "N/A"
-- Zebra: #DBE5F1 / #FFFFFF bergantian per item row (di dok sumber manual & ada yang miss — generator harus strict alternation, jangan ada row tanpa fill)
-
-## Tabel 5 — Approval
-- 4 kolom: 3240 / 2520 / 2304 / 2304 (Role | Name | Signature | Date)
-- Header: #4F81BD + white bold 7pt
-- 5 role fixed: PGO/Presales (kosong), Product (Rizki Mardita),
-  Project Planner (Badrul Huda), Head of Product (Edward Helly), CTO (Sindu Irawan)
-
-## QA Checklist (anomali dok sumber — JANGAN ditiru)
-- Double number NO=3 dua kali di grup B (Pusdatin doc) -> nomor harus sequential
-- Typo: "stationery" (harusnya stationary), "Algorhytm", "One Tme Pad", "Spesfikasi", "Anlyzer", "Chipper"
-- Trailing empty row di akhir spec table -> hapus
-- SAT kapitalisasi konsisten (Unit bukan campur unit/Unit)
-- Version format konsisten: V<x.y> + changelog dalam kurung
+## Selisih dengan `style-formatting-guidance.md`
+- Guidance menulis warna heading "DarkSlateBlue"; file aktual: Title #17375E (theme text2
+  shade BF), Heading 1 #123555, Heading 2 #1F497D (theme text2). Warna 4F81BD = accent1
+  dipakai untuk fill header tabel, bukan teks heading.
+- Guidance menulis Heading 2 indent 1.7 in; file aktual 400 dxa + leftChars 200 (≈2 ch,
+  ≈0.28 in).
+- Guidance menyebut style `Bullet List - H2` dan `Table - Description`; di file V1.1 bullet
+  masih `List Bullet` dan sel deskripsi `Table - Normal`. Generator memakai nama versi
+  guidance.
+- Font "Calibri (Heading)" / "Cambria (Body)" di guidance = theme major/minor ✓ (cocok).
