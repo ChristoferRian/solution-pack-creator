@@ -201,5 +201,25 @@ for tc in urs_no_cells:
         auto += 1
 ok &= check(f'kolom No URS auto-numbering ({auto}/{len(urs_no_cells)})', auto == len(urs_no_cells), f'{auto}/{len(urs_no_cells)}')
 
+# 10. setiap H1 (setelah yang pertama) didahului paragraf kosong + page break
+_els = [c for c in body]
+_first_h1 = False
+_pb_ok = True
+for _i, _el in enumerate(_els):
+    if _el.tag != W('p'):
+        continue
+    _pPr = _el.find(W('pPr'))
+    _sid = _pPr.find(W('pStyle')) if _pPr is not None else None
+    if _sid is None or _STYLE_NAME(_sid.get(W('val'))).lower() != 'heading 1':
+        continue
+    if not _first_h1:
+        _first_h1 = True
+        continue
+    _prev = _els[_i - 1] if _i else None
+    _has = _prev is not None and any(_br.get(W('type')) == 'page' for _br in _prev.iter(W('br')))
+    if not _has:
+        _pb_ok = False
+ok &= check('H1 ke-2 dst didahului page break', _pb_ok)
+
 print('\nRESULT:', 'ALL PASS' if ok else 'HAS FAILURES')
 sys.exit(0 if ok else 1)

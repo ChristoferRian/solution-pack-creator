@@ -74,6 +74,8 @@ $S/.venv/bin/python $S/scripts/_verify_dev.py output.docx
 - Tabel: style `Normal Table` + border manual #9FBAD0, fill label #E9ECEF, header #4F81BD,
   zebra #DBE5F1/#FFFFFF.
 - Kolom **No URS auto-numbering** (numId 7), bukan angka manual.
+- **Setiap `Heading 1` mulai di halaman baru**: section 2–4 didahului paragraf kosong berisi
+  manual page break (section 1 tetap di halaman judul).
 
 ## Procedure
 1. **Kumpulkan konten** — MoM/requirement. Selesaikan ambiguitas (customer, end user,
@@ -106,6 +108,9 @@ $S/.venv/bin/python $S/scripts/_verify_dev.py output.docx
 - Style XML di template ini memakai `styleId` numerik — script yang membaca XML mentah harus
   memetakan `styleId` → `w:name` (lihat `scripts/_verify_dev.py`), bukan menganggap
   `styleId == "Heading1"`.
+- Section 2–4 wajib didahului **paragraf kosong + manual page break** (`_new_page(doc)` di
+  generator) supaya H1 selalu di awal halaman. Jangan pakai `pageBreakBefore` di style
+  Heading 1 — file acuan pakai manual break, dan itu yang dicek `qc.py`.
 - Spec table (section 5) & Approval table (section 6) di luar scope generator — jangan
   ditambahkan ke output. Layout-nya (bila perlu diedit manual) ada di
   `references/style-spec-v0-pusdatin-legacy.md`.

@@ -25,3 +25,6 @@ Lalu review visual ini:
     Spesfikasi, Anlyzer, Chipper (→cipher).
 12. **Buka di Word**: theme Calibri/Cambria aktif, tabel tidak melewati margin, tidak ada
     baris kosong nyangkut, dan navigation pane rapi (Title → Heading 1 → Heading 2).
+13. **Page break antar section**: section 2, 3, dan 4 masing-masing mulai di halaman baru —
+    di kode XML terlihat sebagai paragraf kosong dengan `<w:br w:type="page"/>` tepat sebelum
+    tiap `Heading 1` (section 1 tetap di halaman judul).

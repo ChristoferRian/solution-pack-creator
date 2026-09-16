@@ -8,6 +8,11 @@ Kalau ada selisih antara file acuan dan `style-formatting-guidance.md`, **file m
 
 ## Halaman
 - Letter 8.5 x 11 in; margin 936 dxa (0.65 in) di keempat sisi; header/footer distance 0.
+- **Page break antar section**: setiap `Heading 1` — kecuali section pertama (1. Document
+  Control) yang tetap di halaman judul — didahului **paragraf kosong berisi manual page break**
+  (`<w:br w:type="page"/>`). Jadi H1 selalu berada di bagian paling atas halaman baru.
+  Pakai mekanisme manual break ini (bukan `pageBreakBefore` di style), meniru file acuan.
+  Paragraf pembawa break harus kosong (tanpa teks) dan tidak boleh kena zebra/spacing aneh.
 
 ## Font & warna
 - Theme: **majorFont = Calibri** (heading), **minorFont = Cambria** (body).

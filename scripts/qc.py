@@ -58,6 +58,28 @@ def has_numpr(p):
         p._p.find(qn('w:pPr')).find(qn('w:numPr')) is not None
 
 
+def has_page_break(p):
+    return any(br.get(qn('w:type')) == 'page' for br in p._p.iter(qn('w:br')))
+
+
+def check_page_breaks(doc, errors):
+    """Setiap Heading 1 (setelah section pertama) harus mulai di halaman baru:
+    didahului paragraf kosong berisi manual page break (house style v1.1)."""
+    paras = doc.paragraphs
+    h1_idx = [i for i, p in enumerate(paras)
+              if p.style is not None and p.style.name == 'Heading 1']
+    if len(h1_idx) != len(EXPECTED_H1):
+        return  # sequence salah sudah dilaporkan di check lain
+    for i in h1_idx[1:]:
+        prev = paras[i - 1]
+        if not has_page_break(prev):
+            errors.append(f'"{paras[i].text}" tidak didahului page break '
+                          f'(H1 harus mulai di halaman baru)')
+        elif prev.text.strip():
+            errors.append(f'paragraf sebelum "{paras[i].text}" harus kosong '
+                          f'(khusus page break)')
+
+
 def check(doc, errors):
     # --- title + headings ---
     titles = [p.text for p in doc.paragraphs if p.style is not None and p.style.name == 'Title']
@@ -82,6 +104,7 @@ def check(doc, errors):
             errors.append(f'heading pakai auto-numbering (harus manual): {p.text!r}')
 
     # --- body/bullet paragraph styles ---
+    check_page_breaks(doc, errors)
     for p in doc.paragraphs:
         if not p.text.strip():
             continue

@@ -157,6 +157,21 @@ def _vcenter(cell):
     cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
 
 
+def _new_page(doc):
+    """Paragraf kosong berisi manual page break.
+
+    House style: setiap Heading 1 (kecuali section pertama) selalu mulai di awal
+    halaman baru — mengikuti pola di file acuan 'Solution Pack Pussiberad 2027 V1.1'
+    (paragraf kosong + <w:br w:type="page"/> sebelum H1, bukan pageBreakBefore di style).
+    """
+    p = doc.add_paragraph()
+    run = p.add_run()
+    br = OxmlElement('w:br')
+    br.set(qn('w:type'), 'page')
+    run._r.append(br)
+    return p
+
+
 # ---- style helpers ----
 
 def _find_numid(doc, fmt='decimal', preferred=None):
@@ -331,6 +346,7 @@ def build_doc_control(doc, meta):
 
 
 def build_background(doc, bg):
+    _new_page(doc)
     doc.add_paragraph('2. Project Background', style=ST_H1)
     doc.add_paragraph('2.1 Customer Background', style=ST_H2)
     for para in _as_list(bg['customer_background']):
@@ -344,6 +360,7 @@ def build_background(doc, bg):
 
 
 def build_urs(doc, urs):
+    _new_page(doc)
     doc.add_paragraph('3. User Requirement Summary', style=ST_H1)
     numid = _find_numid(doc, 'decimal', preferred=7)
     t = doc.add_table(rows=1, cols=3)
@@ -391,6 +408,7 @@ def build_urs(doc, urs):
 
 
 def build_solution(doc, sol):
+    _new_page(doc)
     doc.add_paragraph('4. Proposed Solution', style=ST_H1)
     doc.add_paragraph('4.1 Solution Name', style=ST_H2)
     rows = [
