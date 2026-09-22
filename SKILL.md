@@ -133,11 +133,14 @@ Prosedur:
    Profil yang cocok: konteks `docs`, voice `professional`.
 3. **Tulis balik**: `python3 <skill_dir>/scripts/prose_blocks.py <input.json> --apply prose.txt`.
    Exit 2 = jumlah blok berubah — script sengaja menolak, karena itu pengaman urutan blok.
-4. **Verifikasi mekanis**, original vs hasil, dari folder skill `avoid-ai-writing`:
-   - `node detector/validate.js <original-prose.txt> <rewritten-prose.txt>` → harus `PASS`.
-   - `node scripts/normalize-quotes.js <rewritten> --reference <original> --write` (marks pass).
-   - Detector: `detector/patterns.js` diekspor sebagai module tanpa CLI — panggil
-     `AIDetector.analyzeText(text, { contextMode })` dari helper Node kecil.
+4. **Verifikasi mekanis**, original vs hasil, dijalankan dari folder skill `avoid-ai-writing`.
+   Di bawah, `<aiw_skill_dir>` = folder skill `avoid-ai-writing` — bukan folder skill ini.
+   - `node <aiw_skill_dir>/detector/validate.js <original-prose.txt> <rewritten-prose.txt>`
+     → harus `PASS`.
+   - `node <aiw_skill_dir>/scripts/normalize-quotes.js <rewritten> --reference <original> --write`
+     (marks pass).
+   - Detector: `<aiw_skill_dir>/detector/patterns.js` diekspor sebagai module tanpa CLI —
+     panggil `AIDetector.analyzeText(text, { contextMode })` dari helper Node kecil.
 5. Baru generate .docx, lalu `qc.py` seperti biasa.
 6. **Laporkan ke user**: finding utama, hasil verifikasi, dan residual yang tersisa
    (termasuk yang sengaja dipertahankan). Sediakan review copy prosa kalau diminta.
@@ -208,6 +211,12 @@ Yang **tidak** boleh diubah pass ini:
   dipisah baris kosong), jangan menggabung/memecah blok supaya jumlahnya cocok. Kalau 0 field
   berubah, script tidak menulis file JSON sama sekali; kalau ada perubahan, formatting JSON
   dinormalisasi (indent 2) — diff formatting itu wajar, bukan prosa yang berubah.
+- **Jangan menulis path script skill lain sebagai token `scripts/…`, `templates/…`,
+  `references/…`, `assets/…`, atau `examples/…`** di SKILL.md ini. Installer URL Hermes
+  menarik setiap token seperti itu **dari repo skill ini**, jadi path milik skill lain
+  (mis. script verifikasi milik `avoid-ai-writing`) bikin install gagal atau tidak lengkap.
+  Tulis dengan prefix folder skill-nya (mis. `<aiw_skill_dir>/scripts/...`) supaya token-nya
+  tidak dimulai oleh `scripts/`.
 - **Jangan menaruh absolute path** (`/opt/data/...`, `/Users/...`, `/vaults/...`) di SKILL.md,
   `references/`, atau `scripts/`. Pakai `<skill_dir>` atau path relatif supaya skill tetap
   jalan di harness lain (commandcode, Claude Code, Codex, dll).
