@@ -4,13 +4,16 @@
 > bab 1–4. Bab 5-nya biarkan user isi sendiri.
 
 Hermes skill untuk generate dokumen **Solution Pack `.docx`** (section 1–4) sesuai
-house-style b2b-id, dikunci ke **house style v1.1** (style set diambil dari dokumen
-`Solution Pack Pussiberad 2027 V1.1.docx`).
+house-style b2b-id, dikunci ke **house style v1.2** (style set dari dokumen
+`Solution Pack Pussiberad 2027 V1.1`, ditambah watermark draft & footer draft).
 
 - **Section yang dibuat:** 1. Document Control, 2. Project Background,
   3. User Requirement Summary, 4. Proposed Solution
 - **Bukan scope skill ini:** spec table (section 5), Timeline & Approval (section 6) — manual
-- **Status:** v1.1.1 — house style v1.1, tested & QC-passed (QC struktur + 9 negative input test)
+- **Writing-quality gate:** setiap draft wajib lewat skill `avoid-ai-writing` sebelum
+  generate, supaya prosa dokumen tidak berbunyi seperti tulisan mesin
+- **Status:** v1.3.0 — house style v1.2 + writing-quality gate, tested & QC-passed
+  (QC struktur + verifikasi struktural + 9 negative input test)
 
 Skill ini **harness-agnostic**: cuma butuh Python 3.9+ dan `python-docx`, dan tidak ada
 absolute path yang di-hardcode (semua script me-resolve path relatif ke folder skill).
@@ -53,6 +56,11 @@ Harus berakhir `QC PASS`.
 python3 <skill_dir>/scripts/bootstrap.py
 
 # generate dari input JSON (skema: references/input-schema.md)
+# 1) writing-quality pass — wajib, dikerjakan di JSON, bukan di .docx
+python3 <skill_dir>/scripts/prose_blocks.py <input.json> --extract prose.txt
+#    audit + tulis ulang prose.txt pakai skill avoid-ai-writing, lalu:
+python3 <skill_dir>/scripts/prose_blocks.py <input.json> --apply prose.txt
+# 2) generate
 <skill_dir>/.venv/bin/python <skill_dir>/scripts/generate.py <input.json> <output.docx>
 
 # QC struktur — wajib pass sebelum dikirim
@@ -80,6 +88,7 @@ Contoh output: [`templates/sample-output.docx`](templates/sample-output.docx).
 | `scripts/qc.py` | QC struktur + style output |
 | `scripts/bootstrap.py` | Bikin/repair venv + install dependency |
 | `scripts/export_bundle.py` | Packaging zip untuk dipindah |
+| `scripts/prose_blocks.py` | Ekstrak / tulis-balik blok prosa JSON untuk writing-quality pass |
 | `scripts/_verify_dev.py`, `scripts/_negtest_dev.py` | Test dev (opsional) |
 | `templates/house-style-template.docx` | Template house style (styles/numbering/theme) — **wajib ada** untuk generate |
 | `templates/` | Sample input & output |
@@ -89,6 +98,9 @@ Contoh output: [`templates/sample-output.docx`](templates/sample-output.docx).
 - Python 3.9+
 - `python-docx` (lihat [`requirements.txt`](requirements.txt); `bootstrap.py` mengurusnya)
 - `uv` opsional (lebih cepat); fallback `python -m venv` + `pip`
+- Skill `avoid-ai-writing` — skill terpisah, dipakai di writing-quality pass (langkah wajib
+  sebelum generate). `scripts/prose_blocks.py` sendiri cuma butuh stdlib; dependency Node
+  hanya dipakai untuk verifikasi mekanis di sisi skill `avoid-ai-writing`.
 
 ## Catatan
 

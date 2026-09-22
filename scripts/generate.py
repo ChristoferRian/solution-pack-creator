@@ -20,7 +20,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT
 from docx.oxml.ns import qn
-from docx.oxml import OxmlElement
+from docx.oxml import OxmlElement, parse_xml
 
 TEMPLATE = Path(__file__).resolve().parent.parent / 'templates' / 'house-style-template.docx'
 
@@ -155,6 +155,76 @@ def _run(p, text, size=None, bold=False, color=None, center=False):
 
 def _vcenter(cell):
     cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+
+
+# ---- halaman: watermark draft + footer (house style) ----
+DRAFT_WATERMARK = 'DRAFT'
+DRAFT_FOOTER = 'Internal Draft - S03 Approval Use Only'
+FOOTER_COLOR = RGBColor(0x5A, 0x5A, 0x5A)
+
+_WM_NS = ('xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" '
+          'xmlns:v="urn:schemas-microsoft-com:vml" '
+          'xmlns:o="urn:schemas-microsoft-com:office:office" '
+          'xmlns:w10="urn:schemas-microsoft-com:office:word"')
+
+
+def _watermark_pict(text):
+    """VML watermark teks (diagonal, abu-abu) — sama seperti dokumen acuan V1.2."""
+    return (
+        f'<w:pict {_WM_NS}>'
+        '<v:shape id="PowerPlusWaterMarkObject1" o:spid="_x0000_s2049" o:spt="136" '
+        'type="#_x0000_t136" '
+        'style="position:absolute;left:0pt;height:168.8pt;width:418.45pt;'
+        'mso-position-horizontal:center;mso-position-horizontal-relative:margin;'
+        'mso-position-vertical:center;mso-position-vertical-relative:margin;'
+        'rotation:-2949120f;z-index:-251657216;'
+        'mso-width-relative:page;mso-height-relative:page;" '
+        'fillcolor="#C0C0C0" filled="t" stroked="f" coordsize="21600,21600" adj="10800">'
+        '<v:path/><v:fill on="t" focussize="0,0"/><v:stroke on="f"/>'
+        '<v:imagedata o:title=""/>'
+        '<o:lock v:ext="edit" aspectratio="t"/>'
+        f'<v:textpath on="t" fitshape="t" fitpath="t" trim="t" xscale="f" string="{text}" '
+        'style="font-family:Arial Unicode MS;font-size:36pt;'
+        'v-same-letter-heights:f;v-text-align:center;"/>'
+        '</v:shape></w:pict>'
+    )
+
+
+def build_page_furniture(doc, meta):
+    """Watermark + footer di setiap halaman.
+
+    Default house style: watermark teks "DRAFT" (diagonal, abu-abu #C0C0C0) di header
+    dan footer "Internal Draft - S03 Approval Use Only" (8pt, #5A5A5A, rata tengah).
+    Bisa di-override lewat meta.watermark_text / meta.footer_text (string kosong = tanpa).
+    """
+    wm_text = meta.get('watermark_text', DRAFT_WATERMARK)
+    footer_text = meta.get('footer_text', DRAFT_FOOTER)
+
+    hdr = doc.sections[0].header
+    hdr.is_linked_to_previous = False
+    hp = hdr.paragraphs[0]
+    hp.style = doc.styles['Header']
+    if wm_text:
+        run = hp.add_run()
+        rPr = run._r.get_or_add_rPr()
+        sz = OxmlElement('w:sz')
+        sz.set(qn('w:val'), '18')
+        rPr.append(sz)
+        run._r.append(parse_xml(_watermark_pict(wm_text)))
+
+    ftr = doc.sections[0].footer
+    ftr.is_linked_to_previous = False
+    # tiga paragraf: kosong - teks - kosong (meniru dokumen acuan)
+    for i, para in enumerate(ftr.paragraphs):
+        if i > 2:
+            para._p.getparent().remove(para._p)
+    while len(ftr.paragraphs) < 3:
+        ftr.add_paragraph()
+    for idx, para in enumerate(ftr.paragraphs[:3]):
+        para.style = doc.styles['Footer']
+        para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        if idx == 1 and footer_text:
+            _run(para, footer_text, size=8, color=FOOTER_COLOR)
 
 
 def _new_page(doc):
@@ -468,6 +538,7 @@ def main():
     cp.category = 'Solution Pack Document'
     cp.comments = f"{meta.get('document_code','')} | {meta.get('version','')}".strip(' |')
     build_title(doc, data)
+    build_page_furniture(doc, meta)
     build_doc_control(doc, meta)
     build_background(doc, data['background'])
     build_urs(doc, data['urs'])

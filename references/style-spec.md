@@ -35,6 +35,19 @@ Title / Heading 1 / Heading 2.
 Dua style terakhir (`Bullet List - H2`, `Table - Description`) tidak ada di file acuan;
 generator membuatnya otomatis (`ensure_house_styles()`) sesuai nilai di tabel ini.
 
+## Header (watermark) & Footer — wajib di setiap halaman
+- **Header**: watermark teks VML (`<w:pict><v:shape …><v:textpath string="DRAFT">`),
+  diagonal (`rotation:-2949120f`), warna `#C0C0C0`, font `Arial Unicode MS` 36pt,
+  `v-text-align:center`, posisi absolute center terhadap margin, `z-index:-251657216`.
+  Shape id `PowerPlusWaterMarkObject1`, `o:spt="136"`, `type="#_x0000_t136"`.
+- **Footer**: 3 paragraf style `Footer` semua `<w:jc w:val="center"/>` — paragraf ke-2
+  berisi teks `Internal Draft - S03 Approval Use Only` (8pt, `#5A5A5A`).
+- Latar: dokumen default = **draft** → watermark `DRAFT` + footer draft tersebut.
+  Override lewat `meta.watermark_text` / `meta.footer_text` (string kosong = tanpa).
+- `sectPr` harus punya `headerReference` & `footerReference` type `default`, dan
+  `settings.xml` TIDAK boleh memakai `evenAndOddHeaders` (kalau dipakai, halaman genap
+  kehilangan watermark/footer).
+
 ## Tabel
 - Table style: **`Normal Table`** (tanpa style bawaan); border digambar manual:
   single, sz 4 (0.5 pt), warna **#9FBAD0**, semua sisi termasuk insideH/insideV.

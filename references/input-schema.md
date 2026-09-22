@@ -52,6 +52,10 @@ TBD diperbolehkan sebagai nilai string "TBD".
 9. **meta.title dipakai untuk document properties saja** (title file), TIDAK tampil di body.
    Dokumen hanya punya satu baris judul: "SOLUTION PACK DOCUMENT" (style `Title`).
    Jangan menambahkan baris judul pengadaan — keputusan Chris untuk house style v1.1.
+10. **meta.watermark_text** (default `"DRAFT"`) dan **meta.footer_text**
+    (default `"Internal Draft - S03 Approval Use Only"`) mengatur watermark header & teks
+    footer. Isi string kosong (`""`) kalau ingin tanpa watermark / tanpa footer — mis. untuk
+    dokumen yang sudah berstatus produksi.
 
 ## Defaults
 

@@ -2,6 +2,7 @@
 """Deep structural verification: generated docx vs house style V1.1 (Pusiberad)."""
 import sys
 import zipfile
+import re
 from xml.etree import ElementTree as ET
 
 import os
@@ -220,6 +221,19 @@ for _i, _el in enumerate(_els):
     if not _has:
         _pb_ok = False
 ok &= check('H1 ke-2 dst didahului page break', _pb_ok)
+
+# 11. watermark draft di header + footer draft (rata tengah)
+with zipfile.ZipFile(GEN) as _z:
+    _hdr = ' '.join(_z.read(n).decode('utf-8', 'ignore')
+                    for n in _z.namelist() if re.match(r'word/header\d*\.xml$', n))
+    _ftr = ' '.join(_z.read(n).decode('utf-8', 'ignore')
+                    for n in _z.namelist() if re.match(r'word/footer\d*\.xml$', n))
+    _set = _z.read('word/settings.xml').decode('utf-8', 'ignore')
+_wm = re.findall(r'<v:textpath[^>]*string="([^"]*)"', _hdr)
+ok &= check('watermark DRAFT di header', _wm[:1] == ['DRAFT'], str(_wm))
+ok &= check('footer draft text', 'Internal Draft - S03 Approval Use Only' in _ftr)
+ok &= check('footer rata tengah', set(re.findall(r'<w:jc w:val="([^"]*)"', _ftr)) == {'center'})
+ok &= check('tanpa evenAndOddHeaders', 'evenAndOddHeaders' not in _set)
 
 print('\nRESULT:', 'ALL PASS' if ok else 'HAS FAILURES')
 sys.exit(0 if ok else 1)

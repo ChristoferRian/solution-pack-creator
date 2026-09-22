@@ -22,13 +22,21 @@ EXPECTED_H1 = ['1. Document Control', '2. Project Background',
 EXPECTED_H2 = ['2.1 Customer Background', '2.2 Problem Statement', '2.3 Objective',
                '4.1 Solution Name', '4.2 Solution Overview']
 URS_HEADER = ['No', 'User Requirement', 'Deskripsi']
+DRAFT_WATERMARK = 'DRAFT'
+DRAFT_FOOTER = 'Internal Draft - S03 Approval Use Only'
 TBL_HEADER_41 = ['Item', 'Deskripsi']
 FORBIDDEN = ['stationery', 'algorhytm', 'one tme', 'spesfikasi', 'anlyzer', 'chipper']
 
 # style house-style yang wajib ada + warna heading
 REQUIRED_STYLES = ['Title', 'Heading 1', 'Heading 2', 'Normal', 'Normal - H2',
                    'Bullet List - H2', 'Table - Item', 'Table - Description']
+# alias nama style lama (dokumen buatan tangan pakai 'List Bullet' / 'Table - Normal';
+# efek visualnya sama dengan 'Bullet List - H2' / 'Table - Description')
+STYLE_ALIASES = {'Bullet List - H2': 'List Bullet', 'Table - Description': 'Table - Normal'}
 HEADING_COLORS = {'Heading 1': '123555', 'Heading 2': '1F497D'}
+
+# mode dokumen final (ada bagian manual: Spec Table / Approval Section)
+FINAL = False
 
 
 def cell_fill(cell):
@@ -89,10 +97,10 @@ def check(doc, errors):
         if t.strip() != TITLE_TEXT:
             errors.append(f'judul tidak sesuai: {t!r} (harus {TITLE_TEXT!r})')
 
-    h1 = styled(doc, 1)
+    h1 = styled(doc, 1)[:len(EXPECTED_H1)] if FINAL else styled(doc, 1)
     if h1 != EXPECTED_H1:
         errors.append(f'Heading 1 sequence salah: {h1}')
-    h2 = styled(doc, 2)
+    h2 = styled(doc, 2)[:len(EXPECTED_H2)] if FINAL else styled(doc, 2)
     if h2 != EXPECTED_H2:
         errors.append(f'Heading 2 sequence salah: {h2}')
     h3 = styled(doc, 3)
@@ -105,20 +113,32 @@ def check(doc, errors):
 
     # --- body/bullet paragraph styles ---
     check_page_breaks(doc, errors)
-    for p in doc.paragraphs:
+    paras = doc.paragraphs
+    limit = len(paras)
+    if FINAL:
+        # mode dokumen final: bagian manual (mis. Approval Section) tidak dicek gayanya
+        idx42 = max((i for i, p in enumerate(paras)
+                     if p.style is not None and p.style.name == 'Heading 2'
+                     and p.text.strip() == EXPECTED_H2[-1]), default=None)
+        if idx42 is not None:
+            tail = [i for i, p in enumerate(paras[idx42:], start=idx42)
+                    if p.style is not None and p.style.name == 'Normal - H2']
+            if tail:
+                limit = tail[-1] + 1
+    for p in paras[:limit]:
         if not p.text.strip():
             continue
         if p.style is None:
             continue
         if p.style.name == 'Normal' :
             errors.append(f'paragraf body ber-style Normal (harus "Normal - H2"): {p.text[:40]!r}')
-        if p.style.name in ('List Bullet', 'List Paragraph'):
+        if p.style.name == 'List Paragraph':
             errors.append(f'bullet ber-style {p.style.name!r} (harus "Bullet List - H2"): {p.text[:40]!r}')
 
     # --- styles wajib ada ---
     names = [s.name for s in doc.styles]
     for s in REQUIRED_STYLES:
-        if s not in names:
+        if s not in names and STYLE_ALIASES.get(s) not in names:
             errors.append(f'style wajib tidak ada: {s!r}')
     for style_name, want in HEADING_COLORS.items():
         if style_name in names:
@@ -130,7 +150,7 @@ def check(doc, errors):
 
     # --- tabel ---
     tables = doc.tables
-    if len(tables) != 3:
+    if len(tables) != 3 and not (FINAL and len(tables) >= 3):
         errors.append(f'jumlah tabel harus 3 (DocControl/URS/4.1), dapat {len(tables)}')
     if len(tables) < 3:
         return
@@ -178,7 +198,8 @@ def check(doc, errors):
         if cells[1].paragraphs[0].style.name != 'Table - Item':
             errors.append(f'URS r{i+1} nama style={cells[1].paragraphs[0].style.name!r} '
                           f'(harus "Table - Item")')
-        if cells[2].paragraphs[0].style.name != 'Table - Description':
+        if cells[2].paragraphs[0].style.name != 'Table - Description' \
+                and cells[2].paragraphs[0].style.name != STYLE_ALIASES['Table - Description']:
             errors.append(f'URS r{i+1} deskripsi style={cells[2].paragraphs[0].style.name!r} '
                           f'(harus "Table - Description")')
         if not cells[1].text.strip() or not cells[2].text.strip():
@@ -214,6 +235,51 @@ def check(doc, errors):
             errors.append(f'kata terlarang: {bad!r}')
 
 
+def check_page_furniture(path, errors):
+    """Header  = watermark draft (VML textpath), Footer = teks draft rata tengah.
+
+    House style v1.2: setiap halaman dokumen draft wajib punya watermark + footer ini.
+    """
+    try:
+        with zipfile.ZipFile(path) as z:
+            names = z.namelist()
+            headers = [n for n in names if re.match(r'word/header\d*\.xml$', n)]
+            footers = [n for n in names if re.match(r'word/footer\d*\.xml$', n)]
+            settings = z.read('word/settings.xml').decode('utf-8', 'ignore')
+            doc_xml = z.read('word/document.xml').decode('utf-8', 'ignore')
+            hdr_xml = ' '.join(z.read(n).decode('utf-8', 'ignore') for n in headers)
+            ftr_xml = ' '.join(z.read(n).decode('utf-8', 'ignore') for n in footers)
+    except Exception as e:
+        errors.append(f'tidak bisa baca header/footer: {e}')
+        return
+
+    if not headers:
+        errors.append('tidak ada header part → watermark draft hilang')
+    else:
+        wm = re.findall(r'<v:textpath[^>]*string="([^"]*)"', hdr_xml)
+        if not wm:
+            errors.append('watermark teks tidak ditemukan di header')
+        elif wm[0] != DRAFT_WATERMARK:
+            errors.append(f'watermark text {wm[0]!r} (harus {DRAFT_WATERMARK!r})')
+
+    if not footers:
+        errors.append('tidak ada footer part')
+    else:
+        if DRAFT_FOOTER not in ftr_xml:
+            errors.append(f'footer text {DRAFT_FOOTER!r} tidak ditemukan')
+        jcs = re.findall(r'<w:jc w:val="([^"]*)"', ftr_xml)
+        if not jcs or any(j != 'center' for j in jcs):
+            errors.append(f'footer tidak rata tengah: {jcs}')
+
+    n_sect = len(re.findall(r'<w:sectPr', doc_xml))
+    n_href = len(re.findall(r'<w:headerReference', doc_xml))
+    n_fref = len(re.findall(r'<w:footerReference', doc_xml))
+    if n_href < n_sect or n_fref < n_sect:
+        errors.append(f'referensi header/footer kurang: sectPr={n_sect} href={n_href} fref={n_fref}')
+    if 'evenAndOddHeaders' in settings:
+        errors.append('settings pakai evenAndOddHeaders → watermark/footer hilang di halaman genap')
+
+
 def check_theme(path, errors):
     """Theme harus Calibri (heading) + Cambria (body) sesuai house style."""
     try:
@@ -231,14 +297,24 @@ def check_theme(path, errors):
 
 
 def main():
-    if len(sys.argv) != 2:
-        print('usage: qc.py <output.docx>', file=sys.stderr)
+    global FINAL
+    args = [a for a in sys.argv[1:] if not a.startswith('-')]
+    flags = [a for a in sys.argv[1:] if a.startswith('-')]
+    if '-h' in flags or '--help' in flags:
+        print('usage: qc.py <output.docx> [--final]\n'
+              '  --final : dokumen final (ada Spec Table/Approval manual) — tabel >3 dan\n'
+              '            bagian setelah section 4 tidak dicek gaya paragraphnya.', file=sys.stderr)
+        return 0
+    if len(args) != 1:
+        print('usage: qc.py <output.docx> [--final]', file=sys.stderr)
         return 2
-    path = sys.argv[1]
+    FINAL = '--final' in flags
+    path = args[0]
     doc = Document(path)
     errors = []
     check(doc, errors)
     check_theme(path, errors)
+    check_page_furniture(path, errors)
     if errors:
         for e in errors:
             print('FAIL:', e)

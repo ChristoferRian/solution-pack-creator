@@ -28,3 +28,10 @@ Lalu review visual ini:
 13. **Page break antar section**: section 2, 3, dan 4 masing-masing mulai di halaman baru —
     di kode XML terlihat sebagai paragraf kosong dengan `<w:br w:type="page"/>` tepat sebelum
     tiap `Heading 1` (section 1 tetap di halaman judul).
+14. **Watermark & footer**: setiap halaman punya watermark teks `DRAFT` (diagonal, abu-abu,
+    Arial Unicode MS 36pt) dan footer `Internal Draft - S03 Approval Use Only` (8pt, #5A5A5A,
+    rata tengah). Cek di Word: watermark harus muncul di **semua** halaman (bukan cuma ganjil).
+
+Catatan: `qc.py` punya mode `--final` untuk dokumen yang sudah ditambah bagian manual
+(Spec Table / Approval Section) — tabel >3 diizinkan dan bagian setelah section 4 tidak
+dicek gaya paragrafnya.
